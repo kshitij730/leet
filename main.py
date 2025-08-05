@@ -26,7 +26,7 @@ app = FastAPI()
 
 # Stripe setup
 stripe.api_key = "sk_test_51RgrXWPYPeTVsOaztmyC644IRmtEJ19KjlyE6yph33bOU9xU7dKPGxlDOcICgAO9OP7LDGhhW98DjrRAat9pKyJD00AsUbKrXF"
-YOUR_DOMAIN = "http://pdfcomp.absoluteintel.xyz"
+YOUR_DOMAIN = "https://54.198.15.86"
 STRIPE_WEBHOOK_SECRET = "whsec_DiGnsg34MJJ9T1Rb6REv05H8uVhxWGDr"
 
 # Stripe email access control
@@ -618,4 +618,5 @@ def sanitize_output(text: str) -> str:
         return bleach.clean(html, tags=["p", "strong", "em", "ul", "ol", "li", "table", "tr", "td", "th", "h1", "h2", "h3", "br"], strip=True)
     else:
         return bleach.clean(text, tags=["br"], strip=True)
+
 
