@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Textumatic - Compare Text, Word Documents or PDF files online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600|Poppins:400,600&display=swap" rel="stylesheet">
+  <style>
+    body, h1, h2, h3, h4, p, ul, ol, li {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #fff;
+      color: #30063b;
+    }
+    .navbar {
+      background: #30063b;
+      color: #fff;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .navbar .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      padding: 18px 32px 18px 16px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+    }
+    .navbar nav {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .navbar nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 18px;
+      font-size: 1rem;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .navbar nav a:hover {
+      color: #38c587;
+    }
+    .navbar .cta-btn {
+      background: #fff;
+      color: #30063b;
+      border: 2px solid #38c587;
+      padding: 8px 22px;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-right: 30px;
+      margin-left: 12px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: 0 0 0 2px #38c587;
+    }
+    .navbar .cta-btn:hover {
+      background: #38c587;
+      color: #fff;
+    }
+    
+    .container {
+      padding: 44px 0 0 0;
+      max-width: 980px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .container h1 {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #30063b;
+    }
+    .container p {
+      font-size: 1.15rem;
+      color: #7b8597;
+      margin-bottom: 36px;
+    }
+    .compare-section {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .compare-box {
+      background: #30063b;
+      padding: 34px 18px 30px 18px;
+      border-radius: 8px;
+      width: 260px;
+      min-height: 200px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(30,50,80,0.09);
+      position: relative;
+      font-size: 1rem;
+    }
+    .compare-box .icon {
+      font-size: 2.3rem;
+      margin-bottom: 13px;
+    }
+    .compare-box b {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 1.06rem;
+      letter-spacing: 0.4px;
+    }
+    .compare-box label,
+    .compare-box input[type="file"] {
+      display: block;
+      margin-bottom: 9px;
+    }
+    .compare-box .custom-link {
+      color: #38c587;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .compare-btn {
+  background: #38c587;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.08rem;
+  padding: 12px 48px;
+  font-weight: 600;
+  margin-top: 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.compare-btn:hover {
+  background: #2aa56e;
+}
+
+    .sample-link {
+      font-size: 0.99rem;
+      color: #5877d2;
+      text-decoration: underline;
+      margin-top: 14px;
+      display: inline-block;
+    }
+    @media (max-width: 600px) {
+      .compare-section {
+        flex-direction: column;
+        gap: 18px;
+      }
+      .container {
+        padding: 28px 4vw 0 4vw;
+      }
+    }
+
+    /* Simplified Cloud Buttons */
+.cloud-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 24px;
+  background: linear-gradient(90deg, #38c587, #32a0c2);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cloud-btn:active {
+  transform: scale(0.96);
+}
+
+.cloud-btn .cloud-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cloud-btn.drive {
+  background: linear-gradient(90deg, #4285f4, #34a853);
+}
+
+.cloud-btn.drive:hover {
+  background: linear-gradient(90deg, #34a853, #4285f4);
+}
+
+.cloud-btn.onedrive {
+  background: linear-gradient(90deg, #0062c0, #38c587);
+}
+
+.cloud-btn.onedrive:hover {
+  background: linear-gradient(90deg, #38c587, #0062c0);
+}
+
+.cloud-btn span {
+  font-size: 1rem;
+}
+
+
+    /* --- BOT BUTTON & PANEL --- */
+    #bot-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 1000;
+      background: #fff;
+      border: 2px solid #38c587;
+      border-radius: 100px;
+      padding: 0;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 18px rgba(30,50,80,.14);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #bot-btn:hover {
+      background: #38c587;
+      border-color: #2aa56e;
+    }
+    #bot-btn svg {
+      width: 38px;
+      height: 38px;
+      color: #38c587;
+      transition: color 0.2s;
+    }
+    #bot-btn:hover svg {
+      color: #fff;
+    }
+
+    /* Bot chat panel styles */
+    #bot-panel {
+  position: fixed;
+  bottom: 108px;
+  right: 32px;
+  width: 480px;
+  max-width: 96vw;
+  height: 580px;
+  background: #f8fafd;
+  box-shadow: 0 2px 24px rgba(30,50,80,.22);
+  border-radius: 18px;
+  z-index: 1100;
+  display: none;
+  flex-direction: column;
+  overflow: auto; /* Needed for resize scrollbars */
+  resize: both;   /* 🔥 This enables drag-to-resize */
+  border: 1.5px solid #38c587;
+  animation: bot-panel-in 0.18s cubic-bezier(.4,1.6,.4,1.01);
+  min-width: 300px;
+  min-height: 300px;
+}
+#bot-panel.fullscreen {
+  width: 94vw !important;
+  height: 92vh !important;
+  bottom: 4vh !important;
+  right: 3vw !important;
+  resize: none !important;
+  border-radius: 12px !important;
+}
+
+    @keyframes bot-panel-in {
+      from { opacity: 0; transform: translateY(60px) scale(.94);}
+      to   { opacity: 1; transform: translateY(0) scale(1);}
+    }
+    #bot-panel.active {
+      display: flex;
+    }
+    #bot-panel-header {
+      background: #38c587;
+      color: #fff;
+      padding: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #bot-panel-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+      margin-left: 3px;
+      padding: 0;
+    }
+    #bot-panel-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8fafd;
+}
+
+    /* Beautify chat input */
+    #bot-panel textarea#query {
+      margin: 12px 16px 10px 16px;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border-radius: 7px;
+      border: 1px solid #d6e0ea;
+      resize: none;
+      min-height: 42px;
+      max-height: 95px;
+      color: #393548;
+      outline: none;
+      background: #fff;
+      width: calc(100% - 60px);
+      transition: box-shadow 0.13s;
+      box-shadow: 0 1px 4px rgba(100,180,215,.06);
+      font-family: inherit;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    #bot-panel textarea#query:focus {
+      border-color: #6bc1a6;
+      box-shadow: 0 1px 10px 0 #38c58717;
+    }
+    #bot-panel .chat-submit-btn {
+      position: absolute;
+      bottom: 17px;
+      right: 24px;
+      background: #38c587;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px #1e32501a;
+      cursor: pointer;
+      transition: background 0.13s;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+    #bot-panel .chat-submit-btn:hover {
+      background: #2aa56e;
+    }
+    /* To position input and button properly */
+    #bot-panel .bot-input-row {
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+.bot-message, .user-message {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 1rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.user-message {
+  align-self: flex-end;
+  background-color: #d1f3e2;
+  color: #2a604b;
+}
+
+.bot-message {
+  align-self: flex-start;
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #cce5dc;
+}
+
+#bot-panel-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8fafd;
+}
+
+.timestamp {
+  font-size: 0.78rem;
+  color: #888;
+  align-self: flex-end;
+  margin-top: 2px;
+}
+
+.typing {
+  font-style: italic;
+  color: #777;
+}
+
+.loading {
+  --speed-of-animation: 0.9s;
+  --gap: 6px;
+  --first-color: #4c86f9;
+  --second-color: #49a84c;
+  --third-color: #f6bb02;
+  --fourth-color: #f6bb02;
+  --fifth-color: #2196f3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  gap: 6px;
+  height: 100px;
+  margin: 12px auto 0;
+}
+
+.loading span {
+  width: 4px;
+  height: 50px;
+  background: var(--first-color);
+  animation: scale var(--speed-of-animation) ease-in-out infinite;
+}
+
+.loading span:nth-child(2) {
+  background: var(--second-color);
+  animation-delay: -0.8s;
+}
+
+.loading span:nth-child(3) {
+  background: var(--third-color);
+  animation-delay: -0.7s;
+}
+
+.loading span:nth-child(4) {
+  background: var(--fourth-color);
+  animation-delay: -0.6s;
+}
+
+.loading span:nth-child(5) {
+  background: var(--fifth-color);
+  animation-delay: -0.5s;
+}
+
+@keyframes scale {
+  0%, 40%, 100% {
+    transform: scaleY(0.05);
+  }
+  20% {
+    transform: scaleY(1);
+  }
+}
+  </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<div class="navbar">
+  <div class="logo">
+    <span style="font-family:sans-serif;font-weight: bold;font-size:1.8rem;">&#8767;</span>
+    Textumatic
+  </div>
+  <nav>
+    <a href="#">Products</a>
+    <a href="#">Pricing</a>
+    <a href="#">Resources</a>
+    <a href="#">About</a>
+    <a class="cta-btn" href="#">Try Textumatic Online</a>
+  </nav>
+</div>
+<div class="translate-container">
+  <div class="translate-dropdown">
+    <div id="google_translate_element" style="position: fixed; bottom: 16px; left: 16px; z-index: 1000;"></div>
+  </div>
+</div>
+<!-- Main Content -->
+<div class="container">
+  <h1>Compare Text, Word Documents or PDF files online</h1>
+  <p>Use our side-by-side document comparison software below to highlight changes</p>
+    <div id="google_translate_element" style="position: fixed; bottom: 16px; left: 16px; z-index: 1000;"></div>
+  <form id="upload-form">
+    <div class="compare-section">
+      <!-- File 1 Upload Box -->
+      <div class="compare-box">
+        <b>Drop file1 here</b>
+        <label>
+          <input type="file" name="file1" accept=".pdf" style="color:#fff;background:#13294b;">
+          Browse device (PDF)
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+          <!-- GOOGLE DRIVE BUTTON (beautified) -->
+          <button type="button" class="cloud-btn drive" onclick="onApiLoad()">
+            <span class="cloud-icon">
+              <img src="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png" alt="Drive" style="width: 24px; height: 24px; display:block;">
+            </span>
+            <span>Google Drive</span>
+          </button>
+          <button type="button" class="cloud-btn onedrive" onclick="onOneDriveUpload()">
+            <span class="cloud-icon">
+              <img src="https://cdn-icons-png.flaticon.com/512/732/732221.png" alt="OneDrive" style="width:24px;height:24px;display:block;">
+            </span>
+            <span>OneDrive</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- File 2 Upload Box -->
+      <div class="compare-box">
+        <b>Drop file2 here</b>
+        <label>
+          <input type="file" name="file2" accept=".pdf" style="color:#fff;background:#13294b;">
+          Browse device (PDF)
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+          <button type="button" class="cloud-btn drive" onclick="onApiLoad()">
+            <span class="cloud-icon">
+              <img src="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png" alt="Drive" style="width: 24px; height: 24px; display:block;">
+            </span>
+            <span>Google Drive</span>
+          </button>
+          <button type="button" class="cloud-btn onedrive" onclick="onOneDriveUpload()">
+            <span class="cloud-icon">
+              <img src="https://cdn-icons-png.flaticon.com/512/732/732221.png" alt="OneDrive" style="width:24px;height:24px;display:block;">
+            </span>
+            <span>OneDrive</span>
+          </button>
+        </div>
+      </div>
+    </div>
+<label style="display:block; margin: 15px 0; font-weight: 600; color: #30063b;">
+  Email (optional, required if uploading files > 2MB):
+  <input type="email" name="email" id="email-field" style="padding: 6px; font-size: 1rem; margin-left: 8px;" />
+</label>
+
+    <button type="submit" class="compare-btn">Compare</button>
+  </form>
+
+  <div id="loader" class="loading" aria-live="polite" aria-busy="false" role="status" style="display:none; margin:12px auto 0;">
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+  <div id="output-container" style="margin-top:30px; max-width:980px; margin-left:0px; margin-right:30px; display:none;">
+  <h2 style="color:#111; font-weight:600; margin-bottom:12px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align:left;">
+    Comparison Result:
+  </h2>
+  <div id="output" style="min-height:200px; background:#fff; border:none; border-radius:10px; padding:18px; color:#111; font-size:1.05rem; max-height:none; box-shadow:none; text-align:left;">
+    <!-- Your generated output goes here -->
+  </div>
+</div>
+
+<style>
+  #output, #output * {
+    color: #111 !important;
+    text-align: left !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+</style>
+
+
+
+
+</div>
+
+<!-- BOT BUTTON -->
+<button id="bot-btn" title="Chat with lexi">
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <path d="M12 2a1 1 0 0 0-1 1v1.1A8.002 8.002 0 0 0 4 12v1a3 3 0 0 0 3 3v1a3 3 0 0 0 6 0v-1h2v1a3 3 0 0 0 6 0v-1a3 3 0 0 0-3-3v-1a8.002 8.002 0 0 0-7-7.9V3a1 1 0 0 0-1-1zm-3 9a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm6 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" fill="currentColor"/>
+  </svg>
+</button>
+
+
+<div id="bot-panel" aria-modal="true" role="dialog">
+  <div id="bot-panel-header">
+    <span>🤖 Lexi</span>
+    <button id="fullscreen-toggle" title="Toggle fullscreen" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;">
+      ⛶
+    </button>
+    <button id="bot-panel-close" title="Close bot">&times;</button>
+  </div>
+  <div id="bot-panel-content" style="padding: 10px; color: #38c587; font-weight: 600; font-size: 1.1rem;">
+    🤖 Hello! I am Lexi, how can I assist you with your document comparison today?
+  </div>
+  <div class="bot-input-row">
+    <textarea id="query" placeholder="Ask about the compared documents..."></textarea>
+    <button class="chat-submit-btn" onclick="sendQuery()" aria-label="Send">
+      <!-- Paper plane SVG for send arrow.-->
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2 .01 7z" fill="currentColor"/>
+  </svg>
+    </button>
+  </div>
+</div>
+
+
+<script>
+  // Google Translate
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,ar,hi' }, 'google_translate_element');
+  }
+
+  // Google Picker Auth
+  let oauthToken;
+  const developerKey = "AIzaSyD2aJ4agcAWORFXjjKJGVEJ07A0ZON6Y_U";
+  const clientId = "474218662507-ohjoo30s0doj8e5plrgkk3kcm1r2hkm4.apps.googleusercontent.com";
+  const scope = ['https://www.googleapis.com/auth/drive.readonly'];
+
+  function onApiLoad() {
+    gapi.load('picker', createAuth);
+  }
+
+  function createAuth() {
+    const tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: scope.join(" "),
+      callback: (tokenResponse) => {
+        oauthToken = tokenResponse.access_token;
+        createPicker();
+      }
+    });
+    tokenClient.requestAccessToken();
+  }
+
+  function createPicker() {
+    if (oauthToken) {
+      const picker = new google.picker.PickerBuilder()
+        .addView(google.picker.ViewId.DOCS)
+        .setOAuthToken(oauthToken)
+        .setDeveloperKey(developerKey)
+        .setCallback(pickerCallback)
+        .build();
+      picker.setVisible(true);
+    }
+  }
+
+  function pickerCallback(data) {
+    if (data.action === google.picker.Action.PICKED) {
+      const fileId = data.docs[0].id;
+      downloadFileFromDrive(fileId);
+    }
+  }
+
+  async function downloadFileFromDrive(fileId) {
+    const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+      headers: {
+        Authorization: `Bearer ${oauthToken}`
+      }
+    });
+
+    const blob = await response.blob();
+    const file = new File([blob], `drive_file_${fileId}.pdf`, { type: blob.type });
+
+    const fileInput = document.querySelector('input[name="file1"]:not([data-used])') ||
+                      document.querySelector('input[name="file2"]:not([data-used])');
+
+    if (fileInput) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInput.files = dataTransfer.files;
+      fileInput.setAttribute("data-used", "true");
+      alert(`✅ File "${file.name}" added from Google Drive.`);
+    } else {
+      alert("📁 Both file fields are already used.");
+    }
+  }
+
+  // Dummy OneDrive function
+  function onOneDriveUpload() {
+    alert("⚠️ OneDrive integration is not implemented yet.");
+  }
+
+  // Compare form submission
+  document.getElementById("upload-form").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  const loader = document.getElementById("loader");
+  const outputDiv = document.getElementById("output");
+  const outputContainer = document.getElementById("output-container");
+
+  // Show loader, hide output initially
+  loader.style.display = "flex";
+  loader.setAttribute("aria-busy", "true");
+  outputContainer.style.display = "none";
+  outputDiv.innerHTML = "";
+
+  try {
+    const response = await fetch("/compare-docs-rag", {
+      method: "POST",
+      body: formData,
+    });
+    const html = await response.text();
+
+    // Hide loader and display output when done
+    loader.style.display = "none";
+    loader.setAttribute("aria-busy", "false");
+    outputDiv.innerHTML = html;
+    outputContainer.style.display = "block";
+  } catch (err) {
+    loader.style.display = "none";
+    loader.setAttribute("aria-busy", "false");
+    outputDiv.innerHTML = `<div style="color:red;">🚫 You are offline: ${err.message}</div>`;
+    outputContainer.style.display = "block";
+  }
+});
+
+// Prefill email input from URL ?email= param if available
+function prefillEmail() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const emailParam = urlParams.get('email');
+  if (emailParam) {
+    const emailInput = document.getElementById('email-field');
+    if (emailInput) {
+      emailInput.value = emailParam;
+    }
+  }
+}
+prefillEmail();
+
+  // Ask Bot Logic
+  async function sendQuery() {
+  const queryInput = document.getElementById("query");
+  const query = queryInput.value.trim();
+  const messages = document.getElementById("bot-panel-content");
+  if (!query) return;
+
+  // Clear input
+  queryInput.value = "";
+
+  // Create user message bubble
+  const userBubble = document.createElement("div");
+  userBubble.className = "user-message";
+  userBubble.innerHTML = `
+    <div>${query}</div>
+    <div class="timestamp">${getTime()}</div>
+  `;
+  messages.appendChild(userBubble);
+  messages.scrollTop = messages.scrollHeight;
+
+  // Show "typing..." indicator
+  const typingBubble = document.createElement("div");
+  typingBubble.className = "bot-message typing";
+  typingBubble.textContent = "Lexi is typing...";
+  messages.appendChild(typingBubble);
+  messages.scrollTop = messages.scrollHeight;
+
+  const formData = new FormData();
+  formData.append("query", query);
+
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      body: formData
+    });
+
+    const text = await response.text();
+
+    // Remove typing bubble
+    messages.removeChild(typingBubble);
+
+    // Add bot response bubble
+    const botBubble = document.createElement("div");
+    botBubble.className = "bot-message";
+    botBubble.innerHTML = `
+      <div>${text}</div>
+      <div class="timestamp">${getTime()}</div>
+    `;
+    messages.appendChild(botBubble);
+    messages.scrollTop = messages.scrollHeight;
+
+  } catch (err) {
+    messages.removeChild(typingBubble);
+    const errorBubble = document.createElement("div");
+    errorBubble.className = "bot-message";
+    errorBubble.innerHTML = `
+      <div style="color:red;">Bot error: ${err.message}</div>
+      <div class="timestamp">${getTime()}</div>
+    `;
+    messages.appendChild(errorBubble);
+    messages.scrollTop = messages.scrollHeight;
+  }
+}
+
+// Utility to get current time in HH:MM AM/PM format
+function getTime() {
+  const now = new Date();
+  return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Enter-to-send shortcut
+document.getElementById("query").addEventListener('keydown', function(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendQuery();
+  }
+});
+
+
+  // Bot panel toggling
+  const botBtn = document.getElementById('bot-btn');
+  const botPanel = document.getElementById('bot-panel');
+  const botContent = document.getElementById('bot-panel-content');
+  const botClose = document.getElementById('bot-panel-close');
+
+  botBtn.addEventListener('click', () => {
+  botPanel.classList.toggle('active');
+  if (botPanel.classList.contains('active') && botContent.innerHTML.trim() === '') {
+    botContent.innerHTML = '<div><strong>Lexi:</strong> 🤖 Hello! I am Lexi, how can I assist you with your document comparison today?</div>';
+  }
+});
+    const fullscreenToggle = document.getElementById('fullscreen-toggle');
+    fullscreenToggle.addEventListener('click', () => {
+    const isFullscreen = botPanel.classList.toggle('fullscreen');
+    fullscreenToggle.textContent = isFullscreen ? '❎' : '⛶';
+    });
+
+
+  botClose.addEventListener('click', () => {
+    botPanel.classList.remove('active');
+  });
+</script>
+</body>
+</html>
