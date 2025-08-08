@@ -35,7 +35,7 @@ FREE_MAX_SIZE_MB = 2
 PREMIUM_MAX_SIZE_MB = 5
 user_payment_status = {}
 
-groq_client = Groq(api_key="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")
+groq_client = Groq(api_key="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")
 
 embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 combined_vectorstore = None
@@ -618,6 +618,7 @@ def sanitize_output(text: str) -> str:
         return bleach.clean(html, tags=["p", "strong", "em", "ul", "ol", "li", "table", "tr", "td", "th", "h1", "h2", "h3", "br"], strip=True)
     else:
         return bleach.clean(text, tags=["br"], strip=True)
+
 
 
 
